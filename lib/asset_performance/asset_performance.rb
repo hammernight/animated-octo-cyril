@@ -1,19 +1,27 @@
 module AssetPerformance
   module AddsAssetPerformance
 
+    require 'pry'
+
+    ENV_OUT_DIR = ENV['ASSET_PERFORMANCE_DIR']
+    DEFAULT_OUT_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..', 'features', 'out'), __FILE__)
+
     def self.formatter_with_asset_performance(formatter_class)
       Class.new(formatter_class) { include AddsAssetPerformance }
     end
 
-    def scenario_name(keyword, name, file_colon_line, source_indent)
-      name = append_asset_performance_to(name)
-      super(keyword, name, file_colon_line, source_indent)
+    def after_feature_element(feature_element)
+      append_asset_performance_to feature_element.title
+      super feature_element
     end
 
     def append_asset_performance_to(name)
       # TODO
 
-      # create an out directory somewhere with the scenario name if it doesn't exist already
+      out_dir = ENV_OUT_DIR.nil? ? DEFAULT_OUT_DIR : ENV_OUT_DIR
+      FileUtils.mkdir_p out_dir unless Dir.exists? out_dir
+      scenario_out_dir = "#{out_dir}/#{name.downcase.tr(' ', '_')}"
+      FileUtils.mkdir_p scenario_out_dir unless Dir.exists? scenario_out_dir
 
       # look for .HAR out directory via environment variable
 

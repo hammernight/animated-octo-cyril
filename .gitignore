@@ -1,4 +1,5 @@
 .idea/
-example/performance_out
+features/out
 .ruby-version
 .ruby-gemset
+out.html

@@ -7,7 +7,7 @@ When /^I submit the simple form example$/ do
 end
 
 When /^I let firebug catch up$/ do
-  sleep 5
+  sleep 1
 end
 
 Then /^the har file should be successfully created$/ do

@@ -57,6 +57,7 @@ GEM
       rubyzip (~> 1.0)
       websocket (~> 1.0.4)
     slop (3.4.7)
+    syntax (1.1.0)
     watir-webdriver (0.6.4)
       selenium-webdriver (>= 2.18.0)
     websocket (1.0.7)
@@ -70,4 +71,5 @@ DEPENDENCIES
   pry
   pry-nav
   rspec
+  syntax
   watir-webdriver
