@@ -20,6 +20,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-nav'
   s.add_dependency 'har'
   s.add_dependency 'chronic'
+  s.add_dependency 'tilt'
+  s.add_dependency 'haml'
 
   s.files         = `git ls-files`.split('\n')
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
