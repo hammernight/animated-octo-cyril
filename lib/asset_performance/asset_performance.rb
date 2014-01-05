@@ -24,14 +24,28 @@ module AssetPerformance
     end
 
     def append_asset_performance_to(feature_element)
-      raise 'Please set the environment variable ASSET_PERFORMANCE_DIR in order to allow the formatter to find your .HAR files.' if ENV_OUT_DIR.nil?\
-
-      last_har_file_name = Dir.glob("#{ENV_OUT_DIR}/*.har").last # hack to get the file that was created last
-      har = HAR::Archive.from_file last_har_file_name
+      raise 'Please set the environment variable ASSET_PERFORMANCE_DIR in order to allow the formatter to find your .HAR files.' if ENV_OUT_DIR.nil?
 
       scenario = Scenario.new
       scenario.title = feature_element.title
+      scenario.pages = build_har_pages get_har
 
+      html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
+          Object.new,
+          dir: File.dirname(__FILE__),
+          scenario: scenario
+      )
+      File.open("#{File.join(ENV_OUT_DIR, 'asset-performance.html')}", 'w') { |file| file.write html }
+    end
+
+    private
+
+    def get_har
+      last_har_file_name = Dir.glob("#{ENV_OUT_DIR}/*.har").last # hack to get the file that was created last
+      HAR::Archive.from_file last_har_file_name
+    end
+
+    def build_har_pages(har)
       pages = []
       har.pages.each do |har_page|
         page = Page.new
@@ -64,16 +78,7 @@ module AssetPerformance
         end
         pages << page
       end
-
-      scenario.pages = pages
-
-      html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
-          Object.new,
-          dir: File.dirname(__FILE__),
-          start_time: har.pages.first.started_date_time,
-          scenario: scenario
-      )
-      File.open("#{File.join(ENV_OUT_DIR, 'asset-performance.html')}", 'w') { |file| file.write html }
+      pages
     end
 
   end
