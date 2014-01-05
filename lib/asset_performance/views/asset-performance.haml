@@ -1,0 +1,75 @@
+!!!
+%html
+  %head
+    %title Cucumber Asset Performance
+    %script(src="#{File.join(dir, 'views', 'assets', 'js', 'jquery-1.10.2.min.js')}")
+    %script(src="#{File.join(dir, 'views', 'assets', 'js', 'bootstrap.min.js')}")
+    %link(rel='stylesheet' type='text/css' href="#{File.join(dir, 'views', 'assets', 'css', 'bootstrap.min.css')}")
+    %link(rel='stylesheet' type='text/css' href="#{File.join(dir, 'views', 'assets', 'css', 'asset-performance.css')}")
+  %body
+    .navbar.navbar-default.navbar-fixed-top{role: 'navigation'}
+      .container
+        .navbar-header
+          %a.navbar-brand{href: '#'} Cucumber Asset Performance
+    .container.start
+      .row
+        .col-lg-6.well
+          %h3
+            Scenario:
+            %em.normal-weight= scenario.title
+          %h3
+            Start Time:
+            %em.normal-weight= start_time.strftime '%D %r'
+          %h3
+            Total Pages:
+            %em.normal-weight= scenario.pages.size
+          %h3
+            Total Assets:
+            - assets = 0
+            - scenario.pages.each { |page| assets += page.page_assets.size }
+            %em.normal-weight= assets
+          %h3
+            Total Load Time:
+            - total_load_time = 0
+            - scenario.pages.each { |page| total_load_time += page.total_load_time }
+            %em.normal-weight #{total_load_time}ms
+      %p Pages:
+      %hr
+      - scenario.pages.each do |page|
+        %p
+          Page Title:
+          = page.title
+        %p
+          Page Load Time:
+          #{page.total_load_time}ms
+        %p Assets:
+        - page.page_assets.each do |page_asset|
+          .thumbnail{style: 'margin-left: 40px;'}
+            %p
+              URL:
+              = page_asset.request.url
+            %p
+              Request Type:
+              = page_asset.request.type
+            %p
+              Response Status:
+              = page_asset.response.status
+            %p
+              Response Header Size:
+              = page_asset.response.header_size
+            %p
+              Response Body Size:
+              = page_asset.response.body_size
+            %p
+              Mime Type:
+              = page_asset.response.mime_type
+            .row
+              .col-lg-4.well
+                %h3 Timings
+                %p Blocked: #{page_asset.response.timings.blocked}
+                %p DNS: #{page_asset.response.timings.dns}
+                %p Connect: #{page_asset.response.timings.connect}
+                %p Send: #{page_asset.response.timings.send}
+                %p Wait: #{page_asset.response.timings.wait}
+                %p Receive: #{page_asset.response.timings.receive}
+        %hr
