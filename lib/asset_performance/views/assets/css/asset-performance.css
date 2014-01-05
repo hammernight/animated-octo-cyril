@@ -5,3 +5,15 @@
 .normal-weight {
     font-weight: normal;
 }
+
+.thumbnail {
+    padding: 14px;
+}
+
+.thumbnail .well {
+    margin-left: -14px;
+}
+
+.indent {
+    margin-left: 40px;
+}

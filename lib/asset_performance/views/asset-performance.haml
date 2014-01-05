@@ -13,7 +13,7 @@
           %a.navbar-brand{href: '#'} Cucumber Asset Performance
     .container.start
       .row
-        .col-lg-6.well
+        .col-lg-6
           %h3
             Scenario:
             %em.normal-weight= scenario.title
@@ -33,43 +33,51 @@
             - total_load_time = 0
             - scenario.pages.each { |page| total_load_time += page.total_load_time }
             %em.normal-weight #{total_load_time}ms
-      %p Pages:
       %hr
-      - scenario.pages.each do |page|
-        %p
-          Page Title:
-          = page.title
-        %p
-          Page Load Time:
-          #{page.total_load_time}ms
-        %p Assets:
-        - page.page_assets.each do |page_asset|
-          .thumbnail{style: 'margin-left: 40px;'}
-            %p
-              URL:
-              = page_asset.request.url
-            %p
-              Request Type:
-              = page_asset.request.type
-            %p
-              Response Status:
-              = page_asset.response.status
-            %p
-              Response Header Size:
-              = page_asset.response.header_size
-            %p
-              Response Body Size:
-              = page_asset.response.body_size
-            %p
-              Mime Type:
-              = page_asset.response.mime_type
-            .row
-              .col-lg-4.well
-                %h3 Timings
-                %p Blocked: #{page_asset.response.timings.blocked}
-                %p DNS: #{page_asset.response.timings.dns}
-                %p Connect: #{page_asset.response.timings.connect}
-                %p Send: #{page_asset.response.timings.send}
-                %p Wait: #{page_asset.response.timings.wait}
-                %p Receive: #{page_asset.response.timings.receive}
-        %hr
+      .panel-group#pages-accordion
+        - scenario.pages.each_with_index do |page, index|
+          - id = "page_#{index}"
+          .panel.panel-default
+            .panel-heading
+              %h5.panel-title
+                %a{data: {toggle: 'collapse', parent: '#pages-accordion'}, href: "##{id}"}= page.title
+            .panel-collapse.collapse{id: id}
+              .panel-body
+                %p
+                  Page Title:
+                  = page.title
+                %p
+                  Page Load Time:
+                  #{page.total_load_time}ms
+                .panel-group#assets-accordion
+                  - page.page_assets.each_with_index do |page_asset, index|
+                    - id = "asset_#{index}"
+                    .panel.panel-info
+                      .panel-heading.panel-info
+                        %h6.panel-title
+                          %a{data: {toggle: 'collapse', parent: '#assets-accordion'}, href: "##{id}"}
+                            = page_asset.request.type
+                            \ -
+                            = page_asset.request.url
+                      .panel-collapse.collapse{id: id}
+                        .panel-body
+                          %p
+                            Response Status:
+                            = page_asset.response.status
+                          %p
+                            Response Header Size:
+                            = page_asset.response.header_size
+                          %p
+                            Response Body Size:
+                            = page_asset.response.body_size
+                          %p
+                            Mime Type:
+                            = page_asset.response.mime_type
+                          %p Timings:
+                          .timings.indent
+                            %p Blocked: #{page_asset.response.timings.blocked}
+                            %p DNS: #{page_asset.response.timings.dns}
+                            %p Connect: #{page_asset.response.timings.connect}
+                            %p Send: #{page_asset.response.timings.send}
+                            %p Wait: #{page_asset.response.timings.wait}
+                            %p Receive: #{page_asset.response.timings.receive}
