@@ -10,6 +10,6 @@ When /^I let firebug catch up$/ do
   sleep 1
 end
 
-Then /^the har file should be successfully created$/ do
+Then /^The HAR file should be successfully created$/ do
   pending # express the regexp above with the code you wish you had
 end

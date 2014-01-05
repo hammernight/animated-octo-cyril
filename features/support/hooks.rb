@@ -17,11 +17,9 @@ Before do
   profile['extensions.firebug.defaultPanelName'] = 'net'
   profile['extensions.firebug.netexport.alwaysEnableAutoExport'] = true
   profile['extensions.firebug.netexport.autoExportToFile'] = true
-  #profile['extensions.firebug.netexport.beaconServerURL'] = 'http://localhost/showslow/beacon/har/'
   profile['extensions.firebug.netexport.defaultLogDir'] = DEFAULT_OUT_DIR
 
-  @browser = Watir::Browser.new :firefox, :profile => profile
-
+  @browser = Watir::Browser.new :firefox, profile: profile
 end
 
 After do
