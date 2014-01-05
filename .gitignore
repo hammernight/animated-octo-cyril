@@ -1,5 +1,4 @@
 .idea/
-features/out
+features/out/*
 .ruby-version
 .ruby-gemset
-out.html
