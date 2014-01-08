@@ -2,6 +2,7 @@
 
 require 'haml'
 require 'har'
+require 'active_support/inflector'
 require_relative 'models/page_asset'
 require_relative 'models/page'
 require_relative 'models/request'
@@ -12,7 +13,7 @@ require_relative 'models/timings'
 module AssetPerformance
   module AddsAssetPerformance
 
-    ENV_OUT_DIR = ENV['ASSET_PERFORMANCE_DIR']
+    ENV_OUT_DIR = ENV['ASSET_PERFORMANCE_DIR'] ||= DEFAULT_OUT_DIR
 
     def self.formatter_with_asset_performance(formatter_class)
       Class.new(formatter_class) { include AddsAssetPerformance }
@@ -28,7 +29,7 @@ module AssetPerformance
 
       scenario = Scenario.new
       scenario.title = feature_element.title
-      scenario.pages = build_har_pages get_har
+      scenario.pages = build_har_pages get_har scenario.title
 
       html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
           Object.new,
@@ -40,8 +41,8 @@ module AssetPerformance
 
     private
 
-    def get_har
-      last_har_file_name = Dir.glob("#{ENV_OUT_DIR}/*.har").last # hack to get the file that was created last
+    def get_har(scenario_name)
+      last_har_file_name = Dir.glob("#{ENV_OUT_DIR}/#{scenario_name.parameterize.underscore}/*.har").last # hack to get the file that was created last
       HAR::Archive.from_file last_har_file_name
     end
 
