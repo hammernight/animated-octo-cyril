@@ -5,5 +5,5 @@ Given /^I do a Google search$/ do
 end
 
 When /^I choose the first search result$/ do
-  @browser.link(text: 'Manheim').click
+  @browser.link(text: 'Manheim').when_present.click
 end
