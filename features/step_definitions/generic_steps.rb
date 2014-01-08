@@ -1,5 +1,5 @@
 When /^I let firebug catch up$/ do
-  sleep 1
+  sleep 5
 end
 
 Then /^The HAR file should be successfully created$/ do

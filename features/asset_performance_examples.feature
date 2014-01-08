@@ -8,7 +8,8 @@ Feature: Asset Performance Examples
 
 
   Scenario: another Example using derp-bear
-    Given I add items to the knockoutjs example
-    Then I should see my item in the list
+    Given I visit the knockoutjs example
+    When I add some items to my list
+    Then I should see my item in my list
     And I let firebug catch up
     And The HAR file should be successfully created
