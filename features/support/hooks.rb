@@ -18,6 +18,7 @@ Before do |scenario|
   profile['extensions.firebug.addonBarOpened'] = true
   profile['extensions.firebug.console.enableSites'] = true
   profile['extensions.firebug.defaultPanelName'] = 'net'
+  profile['extensions.firebug.netexport.showPreview'] = false
   profile['extensions.firebug.netexport.alwaysEnableAutoExport'] = true
   profile['extensions.firebug.netexport.autoExportToFile'] = true
   profile['extensions.firebug.netexport.Automation'] = true

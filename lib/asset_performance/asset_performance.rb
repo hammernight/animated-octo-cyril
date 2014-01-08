@@ -27,16 +27,15 @@ module AssetPerformance
     def append_asset_performance_to(feature_element)
       raise 'Please set the environment variable ASSET_PERFORMANCE_DIR in order to allow the formatter to find your .HAR files.' if ENV_OUT_DIR.nil?
 
-      scenario = Scenario.new
-      scenario.title = feature_element.title
-      scenario.pages = build_har_pages get_har scenario.title
+      pages = build_har_pages(get_har(feature_element.title))
+      scenario = Scenario.new feature_element.title, pages
 
       html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
           Object.new,
           dir: File.dirname(__FILE__),
           scenario: scenario
       )
-      File.open("#{File.join(ENV_OUT_DIR, 'asset-performance.html')}", 'w') { |file| file.write html }
+      File.open("#{File.join("#{ENV_OUT_DIR}/#{scenario.title.parameterize.underscore}", 'asset-performance.html')}", 'w') { |file| file.write html }
     end
 
     private
@@ -49,33 +48,16 @@ module AssetPerformance
     def build_har_pages(har)
       pages = []
       har.pages.each do |har_page|
-        page = Page.new
-        page.total_load_time = har_page.timings.on_load
-        page.title = har_page.title
+        page = Page.new har_page.title, har_page.timings.on_load
         har_page.entries.each do |har_asset|
-          asset = PageAsset.new
           har_request = har_asset.request
-          request = Request.new
-          request.url = har_request.url
-          request.type = har_request.method
-          asset.request = request
+          request = Request.new har_request.url, har_request.method
           har_response = har_asset.response
-          response = Response.new
-          response.status = har_response.status
-          response.header_size = har_response.headers_size
-          response.body_size = har_response.body_size
-          response.mime_type = har_response.content.mime_type
-          asset.response = response
           har_timings = har_asset.timings
-          timings = Timings.new
-          timings.blocked = har_timings.blocked
-          timings.dns = har_timings.dns
-          timings.connect = har_timings.connect
-          timings.send = har_timings.send
-          timings.wait = har_timings.wait
-          timings.receive = har_timings.receive
-          response.timings = timings
+          timings = Timings.new har_timings.blocked, har_timings.dns, har_timings.connect, har_timings.send, har_timings.wait, har_timings.receive
           page.page_assets << asset
+          response = Response.new har_response.status, har_response.headers_size, har_response.body_size, har_response.content.mime_type, timings
+          asset = PageAsset.new request, response
         end
         pages << page
       end
