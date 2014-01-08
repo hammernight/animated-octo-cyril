@@ -1,6 +1,7 @@
-OUT_DIR = ENV['HAR_OUT_DIR'] ||= DEFAULT_OUT_DIR
+
 
 Before do |scenario|
+  OUT_DIR = ENV['HAR_OUT_DIR'] ||= DEFAULT_OUT_DIR
 
   profile = Selenium::WebDriver::Firefox::Profile.new
 
