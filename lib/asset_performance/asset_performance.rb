@@ -28,7 +28,7 @@ module AssetPerformance
       raise 'Please set the environment variable ASSET_PERFORMANCE_DIR in order to allow the formatter to find your .HAR files.' if ENV_OUT_DIR.nil?
 
       pages = build_har_pages(get_har(feature_element.title))
-      scenario = Scenario.new feature_element.title, nil, pages
+      scenario = Scenario.new feature_element.title, Time.now, pages # TODO change the time to be from the HAR file
 
       html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
           Object.new,
