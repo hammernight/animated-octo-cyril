@@ -28,7 +28,7 @@ module AssetPerformance
       raise 'Please set the environment variable ASSET_PERFORMANCE_DIR in order to allow the formatter to find your .HAR files.' if ENV_OUT_DIR.nil?
 
       pages = build_har_pages(get_har(feature_element.title))
-      scenario = Scenario.new feature_element.title, pages
+      scenario = Scenario.new feature_element.title, nil, pages
 
       html = Haml::Engine.new(File.read(File.join(File.dirname(__FILE__), 'views', 'asset-performance.haml'))).render(
           Object.new,
@@ -46,18 +46,19 @@ module AssetPerformance
     end
 
     def build_har_pages(har)
+      # TODO use OpenStruct here...no need to have real models
       pages = []
       har.pages.each do |har_page|
         page = Page.new har_page.title, har_page.timings.on_load
         har_page.entries.each do |har_asset|
           har_request = har_asset.request
           request = Request.new har_request.url, har_request.method
-          har_response = har_asset.response
           har_timings = har_asset.timings
           timings = Timings.new har_timings.blocked, har_timings.dns, har_timings.connect, har_timings.send, har_timings.wait, har_timings.receive
-          page.page_assets << asset
+          har_response = har_asset.response
           response = Response.new har_response.status, har_response.headers_size, har_response.body_size, har_response.content.mime_type, timings
           asset = PageAsset.new request, response
+          page.page_assets << asset
         end
         pages << page
       end
