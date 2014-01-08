@@ -1,4 +1,7 @@
-Before do
+OUT_DIR = ENV['HAR_OUT_DIR'] ||= DEFAULT_OUT_DIR
+
+Before do |scenario|
+
   profile = Selenium::WebDriver::Firefox::Profile.new
 
   profile.native_events = true
@@ -17,7 +20,17 @@ Before do
   profile['extensions.firebug.defaultPanelName'] = 'net'
   profile['extensions.firebug.netexport.alwaysEnableAutoExport'] = true
   profile['extensions.firebug.netexport.autoExportToFile'] = true
-  profile['extensions.firebug.netexport.defaultLogDir'] = DEFAULT_OUT_DIR
+  profile['extensions.firebug.netexport.Automation'] = true
+
+  scenario_name = scenario.title.parameterize.underscore # TODO change this to remove all special characters
+
+  scenario_dir = "#{OUT_DIR}/#{scenario_name}"
+
+  unless Dir.exists? scenario_dir
+    Dir.mkdir scenario_dir
+  end
+
+  profile['extensions.firebug.netexport.defaultLogDir'] = scenario_dir
 
   @browser = Watir::Browser.new :firefox, profile: profile
 end
