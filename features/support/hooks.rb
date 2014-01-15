@@ -1,8 +1,6 @@
 OUT_DIR = ENV['HAR_OUT_DIR'] ||= DEFAULT_OUT_DIR
 
 Before do |scenario|
-
-
   profile = Selenium::WebDriver::Firefox::Profile.new
 
   profile.native_events = true
@@ -24,13 +22,16 @@ Before do |scenario|
   profile['extensions.firebug.netexport.autoExportToFile'] = true
   profile['extensions.firebug.netexport.Automation'] = true
 
-  scenario_name = scenario.title.parameterize.underscore # TODO change this to remove all special characters
+  feature_dir = "#{OUT_DIR}/#{scenario.feature.title.parameterize.underscore}"
+  unless Dir.exists? feature_dir
+    Dir.mkdir feature_dir
+  end
 
-  scenario_dir = "#{OUT_DIR}/#{scenario_name}"
-
+  scenario_dir = "#{feature_dir}/#{scenario.title.parameterize.underscore}"
   unless Dir.exists? scenario_dir
     Dir.mkdir scenario_dir
   end
+
 
   profile['extensions.firebug.netexport.defaultLogDir'] = scenario_dir
 

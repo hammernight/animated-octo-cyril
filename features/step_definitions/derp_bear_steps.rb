@@ -12,7 +12,7 @@ Given(/^I visit the knockoutjs example$/) do
 end
 
 When(/^I add some items to my list$/) do
-  @my_text = "what?"
+  @my_text = 'what?'
   @browser.text_field(id: 'add_item').when_present.set @my_text
   @browser.button(value: 'Add').click
 end
@@ -21,7 +21,3 @@ end
 Then(/^I should see my item in my list$/) do
   @browser.select_list(id: 'your_items_list').options.collect(&:text).should include(@my_text)
 end
-
-
-
-
