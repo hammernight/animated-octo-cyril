@@ -28,7 +28,7 @@ module AssetPerformance
           scenarios: scenarios
       )
 
-      report_file = File.join "#{ENV_OUT_DIR}, #{feature_title.parameterize.underscore}", 'asset-performance.html'
+      report_file = File.join ENV_OUT_DIR, feature_title.parameterize.underscore, 'asset-performance.html'
       File.open(report_file, 'w') { |file| file.write html }
       Launchy.open report_file
     end
@@ -64,7 +64,6 @@ module AssetPerformance
         page = OpenStruct.new title: har_page.title, total_load_time: har_page.timings.on_load, page_assets: assets
         pages << page
       end
-      binding.pry
       pages
     end
 
