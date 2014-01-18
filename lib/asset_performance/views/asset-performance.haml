@@ -18,33 +18,38 @@
         %em.normal-weight= feature_title
       %hr
       .row
-        .col-md-4
+        .col-md-6
           .panel.panel-default
             .panel-heading
-              %em Latest
+              - total_feature_load_time = 0
+              - scenarios.each {|scenario| scenario.pages.each {|page| total_feature_load_time += page.total_load_time}}
+              %em
+                Latest -
+                %strong #{total_feature_load_time}ms
             .panel-body
               .panel-group#scenarios-accordion
                 - scenarios.each_with_index do |scenario, scenario_index|
                   - id = "scenario_#{scenario_index}"
+                  - scenario_load_time = 0
+                  - scenario.pages.each { |page| scenario_load_time += page.total_load_time }
                   .panel.panel-primary
                     .panel-heading
                       .panel-title
-                        %a{data: {toggle: 'collapse', parent: '#scenarios-accordion'}, href: "##{id}"}= scenario.title
+                        %a{data: {toggle: 'collapse', parent: '#scenarios-accordion'}, href: "##{id}"} #{scenario.title} - (#{scenario_load_time}ms)
                     .panel-collapse.collapse{id: id}
                       .panel-body
                         %p
                           Total Pages:
-                          %em.normal-weight= scenario.pages.size
+                          %em= scenario.pages.size
                         %p
                           Total Assets:
                           - assets = 0
                           - scenario.pages.each { |page| assets += page.page_assets.size }
-                          %em.normal-weight= assets
+                          %em= assets
                         %p
                           Time Spent Loading Assets:
-                          - total_load_time = 0
-                          - scenario.pages.each { |page| total_load_time += page.total_load_time }
-                          %em.normal-weight #{total_load_time}ms
+                          %strong
+                            %em #{scenario_load_time}ms
                         %hr
                         .panel-group#pages-accordion
                           - scenario.pages.each_with_index do |page, page_index|
@@ -95,13 +100,15 @@
                                                   %p Send: #{page_asset.response.timings.send_timing}ms
                                                   %p Wait: #{page_asset.response.timings.wait}ms
                                                   %p Receive: #{page_asset.response.timings.receive}ms
-        .col-lg-4
+        .col-lg-6
           .panel.panel-default
             .panel-heading
               %em Second Latest
             .panel-body
-        .col-lg-4
+      %hr
+      .row
+        .col-lg-12
           .panel.panel-default
             .panel-heading
-              %em Third Latest
+              %em Average
             .panel-body
