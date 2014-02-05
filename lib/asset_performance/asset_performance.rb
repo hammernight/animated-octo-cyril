@@ -9,9 +9,15 @@ module AssetPerformance
   module AddsAssetPerformance
 
     ENV_OUT_DIR = ENV['ASSET_PERFORMANCE_DIR'] ||= DEFAULT_OUT_DIR
+    TEST_RUN_START = Time.now
 
     def self.formatter_with_asset_performance(formatter_class)
       Class.new(formatter_class) { include AddsAssetPerformance }
+    end
+
+    def scenario_name(keyword, name, file_colon_line, source_indent)
+      name = append_timestamp_to name
+      super keyword, name, file_colon_line, source_indent
     end
 
     def after_feature(feature)
@@ -35,9 +41,14 @@ module AssetPerformance
 
     private
 
+    def append_timestamp_to(name)
+      ts = Time.now - TEST_RUN_START
+      formatted_timestamp = '%i:%02i' % [ts.to_i/60, (ts%60).round]
+      "#{name} [#{formatted_timestamp}]"
+    end
+
     def build_scenario_timings(scenario)
-      pages = build_har_pages get_har scenario
-      OpenStruct.new title: scenario.title, time: Time.now, pages: pages # TODO change the time to be from the HAR file
+      OpenStruct.new title: scenario.title, pages: build_har_pages(get_har(scenario))
     end
 
     def get_har(scenario)
